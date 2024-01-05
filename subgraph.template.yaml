@@ -1,0 +1,31 @@
+specVersion: 1.2.0
+schema:
+  file: ./schema.graphql
+indexerHints:
+  prune: auto
+dataSources:
+  {{#cauldrons}}
+  - kind: ethereum
+    name: {{name}}
+    network: {{network}}
+    source:
+      address: "{{address}}"
+      abi: CauldronV4
+      startBlock: {{startBlock}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - LogAddCollateral
+        - LogRemoveCollateral
+      abis:
+        - name: CauldronV4
+          file: ./abis/CauldronV4.json
+      eventHandlers:
+        - event: LogAddCollateral(indexed address,indexed address,uint256)
+          handler: handleLogAddCollateral
+        - event: LogRemoveCollateral(indexed address,indexed address,uint256)
+          handler: handleLogRemoveCollateral
+      file: ./src/cauldronV4.ts
+  {{/cauldrons}}

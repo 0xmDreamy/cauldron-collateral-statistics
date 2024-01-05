@@ -1,0 +1,37 @@
+type Cauldron @entity {
+  id: Bytes!
+  collateralShare: BigInt!
+  weekSnapshot: [CauldronWeekSnapshot!]! @derivedFrom(field: "cauldron")
+  userWeekSnapshot: [UserCauldronWeekSnapshot!]! @derivedFrom(field: "cauldron")
+}
+
+type CauldronWeekSnapshot @entity {
+  id: Bytes!
+  cauldron: Cauldron!
+  week: BigInt!
+  weekStartTimestamp: BigInt!
+  weekEndTimestamp: BigInt!
+  updatedAt: BigInt!
+  latestCollateralShare: BigInt!
+  preliminaryCumulativeCollateralShare: BigInt!
+  expectedTimeWeightedAverageCollateralShare: BigInt!
+}
+
+type User @entity {
+  id: Bytes!
+  collateralShare: BigInt!
+  weekSnapshot: [UserCauldronWeekSnapshot!]! @derivedFrom(field: "user")
+}
+
+type UserCauldronWeekSnapshot @entity {
+  id: Bytes!
+  user: User!
+  cauldron: Cauldron!
+  week: BigInt!
+  weekStartTimestamp: BigInt!
+  weekEndTimestamp: BigInt!
+  updatedAt: BigInt!
+  latestCollateralShare: BigInt!
+  preliminaryCumulativeCollateralShare: BigInt!
+  expectedTimeWeightedAverageCollateralShare: BigInt!
+}

@@ -1,0 +1,28 @@
+{
+	"name": "cauldron-collateral-statistics-subgraph",
+	"license": "UNLICENSED",
+	"scripts": {
+		"lint": "biome check",
+		"lint:fix": "biome check --write",
+		"lint:ci": "biome ci",
+		"prepare": "concurrently bun:prepare:*",
+		"prepare:mainnet": "mustache ./config/mainnet.js subgraph.template.yaml > subgraph.yaml",
+		"codegen": "graph codegen",
+		"build": "graph build",
+		"deploy": "graph deploy --studio cauldron-collateral-statistics",
+		"create-local": "graph create --node http://localhost:8020/ cauldron-collateral-statistics",
+		"remove-local": "graph remove --node http://localhost:8020/ cauldron-collateral-statistics",
+		"deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 cauldron-collateral-statistics",
+		"test": "graph test"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@graphprotocol/graph-ts": "^0.35.1",
+		"@graphprotocol/graph-cli": "^0.80.1",
+		"concurrently": "^8.2.2",
+		"@biomejs/biome": "^1.8.3",
+		"matchstick-as": "^0.6.0",
+		"mustache": "^4.2.0"
+	},
+	"trustedDependencies": ["@biomejs/biome", "protobufjs"]
+}
