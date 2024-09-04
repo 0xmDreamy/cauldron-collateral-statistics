@@ -2,7 +2,7 @@ specVersion: 1.2.0
 schema:
   file: ./schema.graphql
 indexerHints:
-  prune: auto
+  prune: never
 dataSources:
   {{#cauldrons}}
   - kind: ethereum
