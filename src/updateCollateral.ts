@@ -4,6 +4,7 @@ import { getOrCreateCauldron } from "./getOrCreateCauldron";
 import { getOrCreateCauldronWeekSnapshot } from "./getOrCreateCauldronWeekSnapshot";
 import { getOrCreateUser } from "./getOrCreateUser";
 import { getOrCreateUserCauldronWeekSnapshot } from "./getOrCreateUserCauldronWeekSnapshot";
+import { getOrCreateUserPosition } from "./getOrCreateUserPosition";
 
 export function updateCollateral(
 	userAddress: Address,
@@ -17,7 +18,8 @@ export function updateCollateral(
 		timestamp,
 	);
 
-	const user = getOrCreateUser(userAddress);
+	getOrCreateUser(userAddress);
+	const userPosition = getOrCreateUserPosition(userAddress, cauldronAddress);
 	const userCauldronWeekSnapshot = getOrCreateUserCauldronWeekSnapshot(
 		userAddress,
 		cauldronAddress,
@@ -40,20 +42,20 @@ export function updateCollateral(
 	);
 	userCauldronWeekSnapshot.preliminaryCumulativeCollateralShare =
 		userCauldronWeekSnapshot.preliminaryCumulativeCollateralShare.plus(
-			secondsSinceUserUpdatedAt.times(user.collateralShare),
+			secondsSinceUserUpdatedAt.times(userPosition.collateralShare),
 		);
 
 	// Update raw entity numbers
 	cauldron.collateralShare = cauldron.collateralShare.plus(shareChange);
 	cauldron.save();
-	user.collateralShare = user.collateralShare.plus(shareChange);
-	user.save();
+	userPosition.collateralShare = userPosition.collateralShare.plus(shareChange);
+	userPosition.save();
 
 	cauldronWeekSnapshot.updatedAt = timestamp;
 	cauldronWeekSnapshot.latestCollateralShare = cauldron.collateralShare;
 
 	userCauldronWeekSnapshot.updatedAt = timestamp;
-	userCauldronWeekSnapshot.latestCollateralShare = user.collateralShare;
+	userCauldronWeekSnapshot.latestCollateralShare = userPosition.collateralShare;
 
 	// Update time weighted average numbers
 	const secondsUntilWeekEnd = cauldronWeekSnapshot.weekStartTimestamp
@@ -68,7 +70,7 @@ export function updateCollateral(
 
 	userCauldronWeekSnapshot.expectedTimeWeightedAverageCollateralShare =
 		userCauldronWeekSnapshot.preliminaryCumulativeCollateralShare
-			.plus(user.collateralShare.times(secondsUntilWeekEnd)) // Add remaining cumulative share until EOW
+			.plus(userPosition.collateralShare.times(secondsUntilWeekEnd)) // Add remaining cumulative share until EOW
 			.div(WEEK_SECONDS);
 	userCauldronWeekSnapshot.save();
 }

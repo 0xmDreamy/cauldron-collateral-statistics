@@ -5,7 +5,6 @@ export function getOrCreateUser(address: Address): User {
 	let user = User.load(address);
 	if (user === null) {
 		user = new User(address);
-		user.collateralShare = BigInt.zero();
 		user.save();
 	}
 	return user;

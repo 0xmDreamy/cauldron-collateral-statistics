@@ -1,6 +1,7 @@
 type Cauldron @entity {
   id: Bytes!
   collateralShare: BigInt!
+  positions: [UserPosition!]! @derivedFrom(field: "cauldron")
   weekSnapshot: [CauldronWeekSnapshot!]! @derivedFrom(field: "cauldron")
   userWeekSnapshot: [UserCauldronWeekSnapshot!]! @derivedFrom(field: "cauldron")
 }
@@ -19,13 +20,22 @@ type CauldronWeekSnapshot @entity {
 
 type User @entity {
   id: Bytes!
-  collateralShare: BigInt!
+  positions: [UserPosition!]! @derivedFrom(field: "user")
   weekSnapshot: [UserCauldronWeekSnapshot!]! @derivedFrom(field: "user")
+}
+
+type UserPosition @entity {
+  id: Bytes!
+  user: User!
+  cauldron: Cauldron!
+  collateralShare: BigInt!
+  weekSnapshot: [UserCauldronWeekSnapshot!]! @derivedFrom(field: "position")
 }
 
 type UserCauldronWeekSnapshot @entity {
   id: Bytes!
   user: User!
+  position: UserPosition!
   cauldron: Cauldron!
   week: BigInt!
   weekStartTimestamp: BigInt!
